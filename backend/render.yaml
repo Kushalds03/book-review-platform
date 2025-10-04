@@ -1,14 +1,29 @@
-# Render deployment configuration
-# This file helps Render understand how to deploy your backend
+version: "1"
 
-# Build command
-npm install
+services:
+  # Backend Service
+  - type: web
+    name: book-review-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
 
-# Start command  
-npm start
-
-# Environment variables needed:
-# MONGODB_URI=mongodb+srv://your-connection-string
-# JWT_SECRET=your-jwt-secret-key
-# NODE_ENV=production
-# FRONTEND_URL=https://your-netlify-app.netlify.app
+  # Frontend Service (optional, if deploying React frontend here too)
+  - type: web
+    name: book-review-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist # or build, depending on your React setup
+    plan: free

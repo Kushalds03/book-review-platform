@@ -1,0 +1,363 @@
+{
+  "info": {
+    "name": "Book Review Platform API",
+    "description": "Complete API collection for the Book Review Platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Signup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/signup",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "signup"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.token) {",
+                  "        pm.collectionVariables.set('jwt_token', response.token);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Books",
+      "item": [
+        {
+          "name": "Get All Books",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/books?page=1&limit=5",
+              "host": ["{{base_url}}"],
+              "path": ["books"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Books",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/books?search=javascript&genre=Fiction",
+              "host": ["{{base_url}}"],
+              "path": ["books"],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "javascript"
+                },
+                {
+                  "key": "genre",
+                  "value": "Fiction"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Book by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/books/:bookId",
+              "host": ["{{base_url}}"],
+              "path": ["books", ":bookId"],
+              "variable": [
+                {
+                  "key": "bookId",
+                  "value": "BOOK_ID_HERE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Book",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"JavaScript: The Good Parts\",\n  \"author\": \"Douglas Crockford\",\n  \"description\": \"A comprehensive guide to JavaScript programming\",\n  \"genre\": \"Technology\",\n  \"year\": 2008\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/books",
+              "host": ["{{base_url}}"],
+              "path": ["books"]
+            }
+          }
+        },
+        {
+          "name": "Update Book",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"JavaScript: The Good Parts (Updated)\",\n  \"author\": \"Douglas Crockford\",\n  \"description\": \"An updated comprehensive guide to JavaScript programming\",\n  \"genre\": \"Technology\",\n  \"year\": 2008\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/books/:bookId",
+              "host": ["{{base_url}}"],
+              "path": ["books", ":bookId"],
+              "variable": [
+                {
+                  "key": "bookId",
+                  "value": "BOOK_ID_HERE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Book",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/books/:bookId",
+              "host": ["{{base_url}}"],
+              "path": ["books", ":bookId"],
+              "variable": [
+                {
+                  "key": "bookId",
+                  "value": "BOOK_ID_HERE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Rating Distribution",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/books/:bookId/ratings",
+              "host": ["{{base_url}}"],
+              "path": ["books", ":bookId", "ratings"],
+              "variable": [
+                {
+                  "key": "bookId",
+                  "value": "BOOK_ID_HERE"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Get Reviews by Book",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/reviews/book/:bookId",
+              "host": ["{{base_url}}"],
+              "path": ["reviews", "book", ":bookId"],
+              "variable": [
+                {
+                  "key": "bookId",
+                  "value": "BOOK_ID_HERE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get User Reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/reviews/user/:userId",
+              "host": ["{{base_url}}"],
+              "path": ["reviews", "user", ":userId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "USER_ID_HERE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookId\": \"BOOK_ID_HERE\",\n  \"rating\": 5,\n  \"reviewText\": \"This is an excellent book! Highly recommended for anyone interested in JavaScript.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/reviews",
+              "host": ["{{base_url}}"],
+              "path": ["reviews"]
+            }
+          }
+        },
+        {
+          "name": "Update Review",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4,\n  \"reviewText\": \"This is a great book! I learned a lot from it.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/reviews/:reviewId",
+              "host": ["{{base_url}}"],
+              "path": ["reviews", ":reviewId"],
+              "variable": [
+                {
+                  "key": "reviewId",
+                  "value": "REVIEW_ID_HERE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Review",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/reviews/:reviewId",
+              "host": ["{{base_url}}"],
+              "path": ["reviews", ":reviewId"],
+              "variable": [
+                {
+                  "key": "reviewId",
+                  "value": "REVIEW_ID_HERE"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

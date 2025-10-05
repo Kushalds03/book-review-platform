@@ -2,11 +2,16 @@ import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
+// Debug logging
+console.log('API_BASE_URL:', API_BASE_URL);
+console.log('VITE_API_URL env var:', import.meta.env.VITE_API_URL);
+
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 10000, // 10 second timeout
 });
 
 // Request interceptor to add auth token
@@ -25,8 +30,18 @@ api.interceptors.request.use(
 
 // Response interceptor to handle auth errors
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('API Response:', response.config.url, response.status);
+    return response;
+  },
   (error) => {
+    console.error('API Error:', {
+      url: error.config?.url,
+      status: error.response?.status,
+      message: error.message,
+      data: error.response?.data
+    });
+    
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');

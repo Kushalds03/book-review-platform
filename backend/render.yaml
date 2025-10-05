@@ -1,14 +1,14 @@
-# Render deployment configuration
-# This file helps Render understand how to deploy your backend
-
-# Build command
-npm install
-
-# Start command  
-npm start
-
-# Environment variables needed:
-# MONGODB_URI=mongodb+srv://your-connection-string
-# JWT_SECRET=your-jwt-secret-key
-# NODE_ENV=production
-# FRONTEND_URL=https://your-netlify-app.netlify.app
+services:
+  - type: web
+    name: book-review-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        fromDatabase:
+          name: book-review-db
+          property: connectionString

@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: book-review-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        value: mongodb+srv://kushalkush132003_db_user:qRDpBiRwi2lKFE2a@book-review.beensbx.mongodb.net/?retryWrites=true&w=majority&appName=book-review
+      - key: JWT_SECRET
+        value: your-super-secure-jwt-secret-key-for-production
+      - key: FRONTEND_URL
+        value: https://your-app-name.netlify.app

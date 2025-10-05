@@ -13,23 +13,30 @@ const errorHandler = require('./middleware/errorHandler');
 const app = express();
 
 // Security middleware
-app.use(helmet({
-  crossOriginEmbedderPolicy: false,
-  contentSecurityPolicy: false,
-}));
+app.use(
+  helmet({
+    crossOriginEmbedderPolicy: false,
+    contentSecurityPolicy: false,
+  })
+);
 
-// CORS configuration
-app.use(cors({
-  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(
+  cors({
+    origin: [
+      'http://localhost:5173',          // local dev
+      'http://127.0.0.1:5173',          // alternate local
+      process.env.FRONTEND_URL,         // Netlify production site
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  max: 100, // limit each IP to 100 requests per windowMs
 });
 app.use(limiter);
 
@@ -64,17 +71,18 @@ app.use('*', (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 // Connect to MongoDB and start server
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/bookreview', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => {
-  console.log('Connected to MongoDB');
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+mongoose
+  .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/bookreview', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log('Connected to MongoDB');
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error('MongoDB connection error:', error);
+    process.exit(1);
   });
-})
-.catch((error) => {
-  console.error('MongoDB connection error:', error);
-  process.exit(1);
-});
